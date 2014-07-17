@@ -43,10 +43,6 @@ function config_gip_storm () {
 
   FUNCTION="config_gip_storm"
 
-  yaimgridenv_set STORM_FRONTEND_ENDPOINT "httpg://${STORM_FRONTEND_PUBLIC_HOST}:${STORM_FRONTEND_PORT}${STORM_FRONTEND_PATH}"
-  yaimgridenv_set STORM_SERVING_STATE 1
-  yaimgridenv_set STORM_SERVING_STATE_VALUE closed
-
   # Create configuration file for dynamic information provider
   FILE="/etc/storm/backend-server/storm-yaim-variables.conf"
   yaimlog INFO "${FUNCTION}: Creating ${FILE} ..."
@@ -54,13 +50,12 @@ function config_gip_storm () {
   chgrp ldap /etc/storm/backend-server/storm-yaim-variables.conf 
   chmod 450 ${FILE}
 
-  if [ YAIM_LOGGING_LEVEL == "debug" ]; then
+  LOGGING_LEVEL=20
+  if [ YAIM_LOGGING_LEVEL == "DEBUG" ]; then
     LOGGING_LEVEL=10
-  else
-    LOGGING_LEVEL=20
   fi
 
-  /usr/libexec/storm-dynamic-info-provider/glite-info-service-storm-init -f ${FILE} -v ${LOGGING_LEVEL}
+  /usr/libexec/storm-dynamic-info-provider/storm-info-provider init -f ${FILE} -v ${LOGGING_LEVEL}
 
   yaimlog DEBUG "${FUNCTION}: FINISHED"
 }
