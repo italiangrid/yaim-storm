@@ -55,7 +55,7 @@ function config_gip_storm () {
     LOGGING_LEVEL=10
   fi
 
-  /usr/libexec/storm-dynamic-info-provider/storm-info-provider init -f ${FILE} -v ${LOGGING_LEVEL}
+  /usr/libexec/storm-info-provider init -f ${FILE} -v ${LOGGING_LEVEL}
 
   yaimlog DEBUG "${FUNCTION}: FINISHED"
 }
