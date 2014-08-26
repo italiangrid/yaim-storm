@@ -39,9 +39,20 @@ function config_gip_storm_check () {
   return $?
 }
 
+function remove_old_cron_files() {
+    cFile="/etc/cron.d/glite-info-dynamic-storm"
+    if [ -z cFile ]; then
+        rm -f ${cFile}
+    cFile="/etc/cron.d/glite-info-glue2-dynamic-storm"
+    if [ -z cFile ]; then
+        rm -f ${cFile}
+}
+
 function config_gip_storm () {
 
   FUNCTION="config_gip_storm"
+
+  remove_old_cron_files()
 
   # Create configuration file for dynamic information provider
   FILE="/etc/storm/backend-server/storm-yaim-variables.conf"
@@ -55,7 +66,7 @@ function config_gip_storm () {
     LOGGING_LEVEL=10
   fi
 
-  /usr/libexec/storm-info-provider init -f ${FILE} -v ${LOGGING_LEVEL}
+  /usr/libexec/storm-info-provider -v ${LOGGING_LEVEL} configure -f ${FILE}
 
   yaimlog DEBUG "${FUNCTION}: FINISHED"
 }
