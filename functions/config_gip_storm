@@ -43,16 +43,18 @@ function remove_old_cron_files() {
     cFile="/etc/cron.d/glite-info-dynamic-storm"
     if [ -z cFile ]; then
         rm -f ${cFile}
+    fi
     cFile="/etc/cron.d/glite-info-glue2-dynamic-storm"
     if [ -z cFile ]; then
         rm -f ${cFile}
+    fi
 }
 
 function config_gip_storm () {
 
   FUNCTION="config_gip_storm"
 
-  remove_old_cron_files()
+  remove_old_cron_files
 
   # Create configuration file for dynamic information provider
   FILE="/etc/storm/backend-server/storm-yaim-variables.conf"
