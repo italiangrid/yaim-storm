@@ -57,10 +57,10 @@ function config_gip_storm () {
   remove_old_cron_files
 
   # Create configuration file for dynamic information provider
-  FILE="/etc/storm/backend-server/storm-yaim-variables.conf"
+  FILE="/etc/storm/info-provider/storm-yaim-variables.conf"
   yaimlog INFO "${FUNCTION}: Creating ${FILE} ..."
   set | egrep '^STORM|^SITE_NAME|^VOS|^MY_DOMAIN' | sort > ${FILE}
-  chgrp ldap /etc/storm/backend-server/storm-yaim-variables.conf 
+  chgrp ldap /etc/storm/info-provider/storm-yaim-variables.conf 
   chmod 450 ${FILE}
 
   LOGGING_LEVEL=20
