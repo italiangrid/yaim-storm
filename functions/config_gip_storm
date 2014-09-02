@@ -64,7 +64,8 @@ function config_gip_storm () {
   chmod 450 ${FILE}
 
   LOGGING_LEVEL=20
-  if [ YAIM_LOGGING_LEVEL == "DEBUG" ]; then
+  yaimlog DEBUG "${FUNCTION}: YAIM_LOGGING_LEVEL is ${YAIM_LOGGING_LEVEL}"
+  if [ ${YAIM_LOGGING_LEVEL} == DEBUG ]; then
     LOGGING_LEVEL=10
   fi
 
