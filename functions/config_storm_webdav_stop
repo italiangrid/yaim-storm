@@ -1,0 +1,7 @@
+# vim: filetype=sh
+
+config_storm_webdav_stop() {
+  service storm-webdav stop
+	# Exit with success
+	return ${YEX_OK}    
+}

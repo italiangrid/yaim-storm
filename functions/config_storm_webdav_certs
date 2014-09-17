@@ -1,0 +1,21 @@
+# vim: filetype=sh
+
+function config_storm_webdav_certs_check() {
+  requires $1 STORM_USER X509_HOST_CERT X509_HOST_KEY
+  return $?
+}
+
+function config_storm_webdav_certs() {
+
+  FUNCTION="config_storm_webdav_certs"
+
+  yaimlog DEBUG "${FUNCTION}: Configuring host credentials in in /etc/grid-security/storm-webdav"
+  mkdir -p /etc/grid-security/storm-webdav
+  cp -f ${X509_HOST_CERT} /etc/grid-security/storm-webdav
+  cp -f ${X509_HOST_KEY} /etc/grid-security/storm-webdav
+
+  chown -R ${STORM_USER}:${STORM_USER} /etc/grid-security/storm-webdav
+
+  # Exit with success
+  return ${YEX_OK}    
+}
