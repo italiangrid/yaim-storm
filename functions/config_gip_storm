@@ -39,22 +39,40 @@ function config_gip_storm_check () {
   return $?
 }
 
-function remove_old_cron_files() {
-    cFile="/etc/cron.d/glite-info-dynamic-storm"
-    if [ -z cFile ]; then
-        rm -f ${cFile}
-    fi
-    cFile="/etc/cron.d/glite-info-glue2-dynamic-storm"
-    if [ -z cFile ]; then
-        rm -f ${cFile}
-    fi
+function remove_file() {
+
+  if [ -e $1 ]; then
+    yaimlog DEBUG "${FUNCTION}: Removing $1 ..."
+    rm -f $1
+  fi
 }
 
-function config_gip_storm () {
+function remove_old_cron_files() {
+    
+  remove_file "/etc/cron.d/glite-info-dynamic-storm"
+  remove_file "/etc/cron.d/glite-info-glue2-dynamic-storm"
+}
+
+function remove_old_bdii_files() {
+  
+  # remove v1.7.6 files
+  remove_file "/var/lib/bdii/gip/ldif/static-file-storm.ldif*"
+  remove_file "/var/lib/bdii/gip/ldif/static-file-glue2-storm.ldif*"
+  remove_file "/var/lib/bdii/gip/plugin/glite-info-dynamic-storm"
+  remove_file "/var/lib/bdii/gip/plugin/glite-info-glue2-dynamic-storm"
+  remove_file "/var/lib/bdii/gip/provider/service-srm-storm-v2"
+  remove_file "/var/lib/bdii/gip/provider/service-glue2-srm-storm-v2"
+  remove_file "/etc/storm/backend-server/storm-yaim-variables.conf"
+  remove_file "/etc/glite/info/service/glite-info-service-srm-storm-v2.conf"
+  remove_file "/etc/glite/info/service/glite-info-service-glue2-srm-storm-v2.conf"
+}
+
+function config_gip_storm() {
 
   FUNCTION="config_gip_storm"
 
   remove_old_cron_files
+  remove_old_bdii_files
 
   # Create configuration file for dynamic information provider
   FILE="/etc/storm/info-provider/storm-yaim-variables.conf"
