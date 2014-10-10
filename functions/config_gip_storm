@@ -41,10 +41,10 @@ function config_gip_storm_check () {
 
 function remove_file() {
 
-  if [ -e $1 ]; then
-    yaimlog DEBUG "${FUNCTION}: Removing $1 ..."
-    rm -f $1
-  fi
+  for f in $1; do
+    yaimlog DEBUG "${FUNCTION}: Removing $f ..."
+    rm -f $f
+  done
 }
 
 function remove_old_cron_files() {
