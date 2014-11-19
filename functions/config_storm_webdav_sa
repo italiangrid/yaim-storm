@@ -1,7 +1,7 @@
 # vim: filetype=sh
 function config_storm_webdav_sa_check () {
 
-requires $1 STORM_USER STORM_STORAGEAREA_LIST VOS
+requires $1 STORM_USER STORM_STORAGEAREA_LIST VOS STORM_DEFAULT_ROOT STORM_ANONYMOUS_HTTP_READ STORM_AUTHENTICATED_HTTP_READ
 return $?
 
 }
