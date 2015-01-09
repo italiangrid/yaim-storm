@@ -1,0 +1,6 @@
+# vim: filetype=sh
+
+config_storm_webdav_start() {
+  service storm-webdav start
+  return $?
+}

@@ -97,11 +97,11 @@ fi
   chown ${STORM_USER}:${STORM_USER} ${FILE}
   chmod 640 ${FILE}
 
-  #==========================================================
-  # Set default (not in defaults/ because use variables set in services/ file)
-  STORM_SURL_ENDPOINT_LIST=${!STORM_SURL_ENDPOINT_LIST:-srm://${STORM_FRONTEND_PUBLIC_HOST}:${STORM_FRONTEND_PORT}${STORM_FRONTEND_PATH}}
-  # Convert spaces to commas
+  # Set surl endpoint list
   STORM_SURL_ENDPOINT_LIST=`echo ${STORM_SURL_ENDPOINT_LIST} | sed -e 's/ /,/g'`
+  if [ -z "$STORM_SURL_ENDPOINT_LIST" ]; then
+    STORM_SURL_ENDPOINT_LIST=`echo "srm://${STORM_FRONTEND_PUBLIC_HOST}:${STORM_FRONTEND_PORT}${STORM_FRONTEND_PATH}"`
+  fi
 
   set_value "storm.service.FE-list.hostnames"   "${STORM_FRONTEND_HOST_LIST}"            ${FILE}
   set_value "storm.service.FE-public.hostname"  "${STORM_FRONTEND_PUBLIC_HOST}"          ${FILE}

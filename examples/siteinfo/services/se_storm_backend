@@ -46,6 +46,9 @@ STORM_DEFAULT_ROOT=/storage
 # List of supported Virtual Organizations.
 #EXAMPLE: VOS="dteam infngrid"
 VOS=
+# StoRM GridHTTPs service public host.
+# OPTIONAL - Default value: ${STORM_BACKEND_HOST}
+#STORM_GRIDHTTPS_PUBLIC_HOST=${STORM_BACKEND_HOST}
 
 # Database settings
 #---------------------------------------------------------
