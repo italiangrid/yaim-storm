@@ -407,6 +407,11 @@ EOF
             <host>${SA_ROOT_HOST}</host>
             <!--port>1094</port-->
           </prot>
+          <prot name="xroot">
+            <schema>xroot</schema>
+            <host>${SA_ROOT_HOST}</host>
+            <!--port>1094</port-->
+          </prot>
 EOF
     fi
      
