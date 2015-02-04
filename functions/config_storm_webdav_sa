@@ -9,7 +9,7 @@ return $?
 function config_storm_webdav_sa () {
 
 FUNCTION="config_storm_webdav_sa"
-config_dir="/etc/storm-webdav/sa.d"
+config_dir="/etc/storm/webdav/sa.d"
 
 for SA in ${STORM_STORAGEAREA_LIST}; do
 
