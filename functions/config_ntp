@@ -54,7 +54,7 @@ config_ntp () {
   fi
 
   # Check if NTP_HOSTS_IP is defined
-  if [ -z ${NTP_HOSTS_IP+x} ]; then
+  if [ -z "$NTP_HOSTS_IP" ]; then
     yaimlog INFO "NTP_HOSTS_IP not defined: ntp configuration is delegated to the site administrator!"
     return 0 # Exit with success
   fi
