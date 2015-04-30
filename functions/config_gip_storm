@@ -88,5 +88,13 @@ function config_gip_storm() {
 
   /usr/libexec/storm-info-provider -v ${LOGGING_LEVEL} configure -f ${FILE}
 
+  if [ $? -eq 0 ]
+  then
+    yaimlog INFO "${FUNCTION}: Successfully configured info-provider"
+  else
+    yaimlog ERROR "${FUNCTION}: Info-provider configuration failed!"
+    return 1
+  fi
+
   yaimlog DEBUG "${FUNCTION}: FINISHED"
 }
