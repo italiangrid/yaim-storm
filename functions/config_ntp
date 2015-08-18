@@ -33,7 +33,7 @@
 
 config_ntp_check () {
 
-  requires $1 NTP_HOSTS_IP
+  requires $1
 
 }
 
@@ -51,6 +51,12 @@ config_ntp () {
   if [ ! -f "/usr/sbin/ntpdate" ] ; then
     yaimlog ERROR "ntpd package not installed"
     return 1
+  fi
+
+  # Check if NTP_HOSTS_IP is defined
+  if [ -z "$NTP_HOSTS_IP" ]; then
+    yaimlog INFO "NTP_HOSTS_IP not defined: ntp configuration is delegated to the site administrator!"
+    return 0 # Exit with success
   fi
 
   # Stop the service
