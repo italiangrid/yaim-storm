@@ -22,9 +22,7 @@ dist_functionlocal_SCRIPTS = config_gip_storm \
     config_storm_frontend \
     config_storm_generic \
     config_storm_globus_gridftp \
-    config_storm_gridhttps_dir \
     config_storm_gridhttps_generic \
-    config_storm_gridhttps_plugin_properties \
     config_storm_gridhttps_properties \
     config_storm_mysql \
     config_storm_namespace \
