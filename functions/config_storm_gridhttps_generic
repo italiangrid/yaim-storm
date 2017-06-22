@@ -75,6 +75,6 @@ function config_storm_gridhttps_generic () {
   /sbin/chkconfig storm-gridhttps-server on
   
   # Exit with success
-  return ${YEX_OK}    
+  return ${YEX_OK}
 
 }

@@ -115,11 +115,6 @@ EOF
     x=STORM_${SA_UPP}_USE_GPFS_PREALLOCATION;  SA_USE_GPFS_PREALLOCATION=${!x:-${STORM_INFO_USE_GPFS_PREALLOCATION}}
     y=`echo ${SA_FSTYPE} | tr '[:upper:]' '[:lower:]'`
     case "$y" in
-      test)
-        SA_FSTYPE=ext3
-        SA_FSDRIVER=test
-        SA_FSSPACESYSTEM=MockSpaceSystem
-        ;;
       posixfs)
         SA_FSTYPE=ext3
         SA_FSDRIVER=posixfs
