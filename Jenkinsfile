@@ -31,6 +31,9 @@ pipeline {
         stage('make') {
           steps {
             sh 'make'
+            script {
+              currentBuild.result = 'SUCCESS'
+            }
           }
         }
       }
