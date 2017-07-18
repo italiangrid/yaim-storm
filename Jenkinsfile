@@ -1,6 +1,6 @@
 pipeline {
   
-    agent { label 'generic' }
+    agent { label 'centos6' }
     
       options {
         buildDiscarder(logRotator(numToKeepStr: '5'))
