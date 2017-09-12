@@ -31,7 +31,7 @@
 
 function config_storm_gridhttps_generic_check () {
 
-  requires $1 STORM_GRIDHTTPS_USER STORM_USER STORM_GRIDHTTPS_CERT_DIR X509_HOST_CERT X509_HOST_KEY
+  requires $1 STORM_GRIDHTTPS_USER STORM_USER
   return $?
 }
 
@@ -45,44 +45,14 @@ function config_storm_gridhttps_generic () {
 
   FUNCTION="config_storm_gridhttps_generic"
 
-  # Add STORM_GRIDHTTPS_USER if missing
-  if [ "${STORM_GRIDHTTPS_USER}" = "root" ]; then
-    yaimlog ERROR "${FUNCTION}: \$STORM_GRIDHTTPS_USER can't be root!"
+  # Check STORM_GRIDHTTPS_USER is STORM_USER
+  if [ "${STORM_GRIDHTTPS_USER}" = "${STORM_USER}" ]; then
+    yaimlog INFO "${FUNCTION}: \$STORM_GRIDHTTPS_USER must be equal to \$STORM_USER - OK"
+  else
+    yaimlog ERROR "${FUNCTION}: \$STORM_GRIDHTTPS_USER must be equal to \$STORM_USER"
     yestr ${YEX_CONFIG}
     yaimlog ERROR "${YERRORSTR}"
     return ${YEX_CONFIG}
-  else
-    id ${STORM_GRIDHTTPS_USER} >& /dev/null \
-      || (yaimlog DEBUG "${FUNCTION}: Adding system user ${STORM_GRIDHTTPS_USER}"; adduser -r ${STORM_GRIDHTTPS_USER})
-    yaimlog DEBUG "${FUNCTION}: Adding '$STORM_GRIDHTTPS_USER' to ${STORM_USER} group"
-    usermod -a -G ${STORM_USER} ${STORM_GRIDHTTPS_USER}
-  fi
-  
-  # Set ${STORM_GRIDHTTPS_USER} environment variable
-  yaimlog DEBUG "${FUNCTION}: Setting up ${STORM_GRIDHTTPS_USER} environment variable"
-  yaimgridenv_set STORM_GRIDHTTPS_USER ${STORM_GRIDHTTPS_USER}
-
-  # Create ${STORM_GRIDHTTPS_CERT_DIR} directory and copy host certificate and key
-  yaimlog DEBUG "${FUNCTION}: Updating host certificate and key in ${STORM_GRIDHTTPS_CERT_DIR}"
-  mkdir -p ${STORM_GRIDHTTPS_CERT_DIR}
-  cp -f ${X509_HOST_CERT} ${STORM_GRIDHTTPS_CERT_DIR}
-  cp -f ${X509_HOST_KEY} ${STORM_GRIDHTTPS_CERT_DIR}
-  chown -R ${STORM_GRIDHTTPS_USER}:${STORM_USER} ${STORM_GRIDHTTPS_CERT_DIR}
-    
-  LOGGING_FOLDER="/var/log/storm"
-  yaimlog DEBUG "${FUNCTION}: Ensuring log folder ${LOGGING_FOLDER} ownership to STORM_USER ${STORM_USER}"
-  chown ${STORM_USER}:${STORM_USER} ${LOGGING_FOLDER} 
-
-  config_dir="/etc/storm/gridhttps-server"
-  # Change ownership to /etc/storm/gridhttps-server configuration directory
-  yaimlog DEBUG "${FUNCTION}: Setting ${config_dir} folder ownership"
-  if [ -d ${config_dir} ]; then
-    chown -R ${STORM_GRIDHTTPS_USER}:${STORM_USER} ${config_dir}
-  else
-    yaimlog ERROR "${FUNCTION}: StoRM GridHTTPs  configuration directory ${config_dir} doesn't exist"
-    yestr ${YEX_NOSUCHFILE}
-    yaimlog ERROR "${YERRORSTR}"
-    return ${YEX_NOSUCHFILE}
   fi
 
   #Adding JAVA_HOME variable to service environment
@@ -99,12 +69,12 @@ function config_storm_gridhttps_generic () {
   	yaimlog DEBUG "${FUNCTION}: Setting up JAVA environment"
   	yaimgridenv_set JAVA_HOME ${JAVA_HOME}
   fi
-  
+
   # Register service to start at boottime
   /sbin/chkconfig --add storm-gridhttps-server
   /sbin/chkconfig storm-gridhttps-server on
   
   # Exit with success
-  return ${YEX_OK}    
+  return ${YEX_OK}
 
 }

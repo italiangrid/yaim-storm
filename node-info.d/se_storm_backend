@@ -46,7 +46,6 @@ config_mkgridmap
 config_vomsmap
 config_storm_generic
 config_storm_dir
-config_storm_gridhttps_dir
 config_storm_mysql
 config_rfio
 config_lcas_lcmaps_gt4
@@ -55,7 +54,6 @@ config_storm_rfio
 config_storm_properties
 config_storm_namespace
 config_storm_used_space
-config_storm_gridhttps_plugin_properties
 config_storm_backend
 config_gip_storm
 config_bdii_5.2

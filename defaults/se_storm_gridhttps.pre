@@ -9,8 +9,8 @@
 # General settings
 #---------------------------------------------------------
 # GridhHTTPs service user.
-# OPTIONAL - Default value: gridhttps
-STORM_GRIDHTTPS_USER=gridhttps
+# OPTIONAL - Default value: storm
+STORM_GRIDHTTPS_USER=storm
 
 # Http connector settings
 #---------------------------------------------------------
