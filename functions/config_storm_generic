@@ -71,6 +71,31 @@ function config_storm_generic () {
   cp -f /etc/grid-security/hostkey.pem ${STORM_CERT_DIR}
   chown -R ${STORM_USER}:${STORM_USER} ${STORM_CERT_DIR}
 
+  # Add STORM_USER to 'edguser' group,
+  yaimlog INFO "${FUNCTION}: Adding user '${STORM_USER}' to the group 'edguser'"
+  if ( getent group "edguser" >/dev/null ); then
+    usermod -a -G edguser $STORM_USER
+  else
+    yaimlog ERROR "${FUNCTION}: Group 'edguser' doesn't exist"
+    yestr ${YEX_CONFIG}
+    yaimlog ERROR "${YERRORSTR}"
+    return ${YEX_CONFIG}
+  fi
+
+  # Add edguser to primary-group of STORM_USER,
+  # for rights on storm-yaim-variables.conf used by the dynamic info-provider
+  yaimlog INFO "${FUNCTION}: Adding user edguser to '${STORM_USER}' group"
+  storm_group=`groups ${STORM_USER} |cut -d " " -f 3`
+  yaimlog DEBUG "storm_group = $storm_group"
+  if ( getent group "${storm_group}" >/dev/null ); then
+    usermod -a -G $storm_group edguser
+  else
+    yaimlog ERROR "${FUNCTION}: Group 'storm_group' doesn't exist"
+    yestr ${YEX_CONFIG}
+    yaimlog ERROR "${YERRORSTR}"
+    return ${YEX_CONFIG}
+  fi
+
   # Set STORM_USER as owner of /etc/grid-security/gridmapdir for writing hardlink
   yaimlog INFO "${FUNCTION}: Set user '${STORM_USER}' as owner of '/etc/grid-security/gridmapdir'"
   chown -R storm:storm /etc/grid-security/gridmapdir  
