@@ -31,7 +31,7 @@
 
 function config_storm_generic_check () {
 
-  yaimlog INFO "No required variables to set."
+  requires $1 STORM_USER STORM_CERT_DIR STORM_BE_XMLRPC_TOKEN
 
 }
 
@@ -44,14 +44,6 @@ function config_storm_generic_setenv () {
 function config_storm_generic () {
 
   FUNCTION="config_storm_generic"
-
-  # check compulstory variable is set
-  if [ -z "${STORM_BE_XMLRPC_TOKEN}" ]; then
-    yaimlog ERROR "${FUNC}: The STORM_BE_XMLRPC_TOKEN variable MUST be set"
-    yestr ${YEX_MISSINGVAR}
-    yaimlog ERROR "${YERRORSTR}"
-    return ${YEX_MISSINGVAR}
-  fi
 
   # Add STORM_USER if missing
   if [ "${STORM_USER}" = "root" ]; then
@@ -74,7 +66,7 @@ function config_storm_generic () {
   # Add STORM_USER to 'edguser' group,
   yaimlog INFO "${FUNCTION}: Adding user '${STORM_USER}' to the group 'edguser'"
   if ( getent group "edguser" >/dev/null ); then
-    usermod -a -G edguser $STORM_USER
+    usermod -a -G edguser ${STORM_USER}
   else
     yaimlog ERROR "${FUNCTION}: Group 'edguser' doesn't exist"
     yestr ${YEX_CONFIG}
@@ -98,7 +90,7 @@ function config_storm_generic () {
 
   # Set STORM_USER as owner of /etc/grid-security/gridmapdir for writing hardlink
   yaimlog INFO "${FUNCTION}: Set user '${STORM_USER}' as owner of '/etc/grid-security/gridmapdir'"
-  chown -R storm:storm /etc/grid-security/gridmapdir  
+  chown -R ${STORM_USER}:${STORM_USER} /etc/grid-security/gridmapdir
 
   #Adding JAVA_HOME variable to service environment
   if [ ! -z ${JAVA_HOME} ] ; then
