@@ -21,9 +21,6 @@ STORM_DEFAULT_ROOT=/storage
 # Host certificate directory for StoRM Backend service.
 # OPTIONAL - Default value: /etc/grid-security/${STORM_USER}
 #STORM_CERT_DIR=/etc/grid-security/${STORM_USER}
-# Directory used to exchange proxies.
-# OPTIONAL - Default value: /etc/storm/tmp
-#STORM_PROXY_HOME=/etc/storm/tmp
 # StoRM Frontend service public host.
 # MANDATORY - Default value: ${STORM_BACKEND_HOST}
 STORM_FRONTEND_PUBLIC_HOST=${STORM_BACKEND_HOST}
@@ -142,7 +139,7 @@ STORM_INFO_USE_GPFS_PREALLOCATION=false
 # OPTIONAL - Available values: [round-robin|smart-rr|random|weight] - Default value: round-robin
 #STORM_GRIDFTP_POOL_STRATEGY=round-robin
 # GRIDFTP servers pool list. A comma separated list of hosts
-# MANDATORY - Default value: ${STORM_BACKEND_HOST} 
+# MANDATORY - Default value: ${STORM_BACKEND_HOST}
 STORM_GRIDFTP_POOL_LIST=${STORM_BACKEND_HOST}
 # Storage Area anonymous read access via HTTP.
 # OPTIONAL - Available values: [true|false] - Default value: false
@@ -183,7 +180,7 @@ STORM_GRIDFTP_POOL_LIST=${STORM_BACKEND_HOST}
 # STORM_SA1_RFIO_SUPPORT   :        Default value: ${STORM_INFO_<PROTOCOL>_SUPPORT}
 # STORM_SA1_ROOT_SUPPORT   :
 # STORM_SA1_FSTYPE         :        See STORM_FSTYPE definition. Default value: ${STORM_FSTYPE}
-# STORM_SA1_USE_GPFS_PREALLOCATION: See STORM_INFO_USE_GPFS_PREALLOCATION definition. Default value: ${STORM_INFO_USE_GPFS_PREALLOCATION}  
+# STORM_SA1_USE_GPFS_PREALLOCATION: See STORM_INFO_USE_GPFS_PREALLOCATION definition. Default value: ${STORM_INFO_USE_GPFS_PREALLOCATION}
 # STORM_SA1_GRIDFTP_POOL_LIST:      See STORM_GRIDFTP_POOL_LIST definition. Default value: ${STORM_GRIDFTP_POOL_LIST}
 # STORM_SA1_GRIDFTP_POOL_STRATEGY:  See STORM_GRIDFTP_POOL_STRATEGY definition. Default value: ${STORM_GRIDFTP_POOL_STRATEGY}
 # STORM_SA1_ANONYMOUS_HTTP_READ:    See STORM_ANONYMOUS_HTTP_READ definition. Default value: ${STORM_ANONYMOUS_HTTP_READ}
@@ -204,7 +201,7 @@ STORM_GRIDFTP_POOL_LIST=${STORM_BACKEND_HOST}
 #
 ##############################################################################
 # Modified by M. David (david@lip.pt) on 12 Oct. 2010
-# added the variable STORM_<SA>_ONLINE_SIZE 
+# added the variable STORM_<SA>_ONLINE_SIZE
 # to be a configurable parameter for the total online size of any given SA
 #
 ##############################################################################

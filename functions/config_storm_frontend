@@ -23,7 +23,7 @@
 #
 # AUTHORS :     grid-release@infn.it
 #
-# NOTES :       
+# NOTES :
 #
 # YAIM MODULE:  yaim-storm
 #
@@ -31,7 +31,7 @@
 
 function config_storm_frontend_check () {
 
-  requires $1 STORM_DB_HOST STORM_DB_PWD STORM_DB_USER STORM_PROXY_HOME STORM_BACKEND_REST_SERVICES_PORT STORM_FRONTEND_PORT
+  requires $1 STORM_DB_HOST STORM_DB_PWD STORM_DB_USER STORM_BACKEND_REST_SERVICES_PORT STORM_FRONTEND_PORT
   return $?
 
 }
@@ -81,7 +81,7 @@ function config_storm_frontend () {
 			  yaimlog ERROR "${YERRORSTR}"
 			  return ${YEX_CONFTARGET}
 		fi
-	fi 
+	fi
 
   yaimlog INFO "${FUNCTION}: Configuration file"
   #----------------------------------------------------------
@@ -145,12 +145,10 @@ function config_storm_frontend () {
   if ! test -z ${STORM_PEPC_RESOURCEID} ; then
     set_value "argus.resource-id"			"${STORM_PEPC_RESOURCEID}"                   ${FILE}
   fi
-  
+
   set_value "monitoring.enabled"			"${STORM_FE_MONITORING_ENABLED}"             ${FILE}
   set_value "monitoring.timeInterval"		"${STORM_FE_MONITORING_TIME_INTERVAL}"       ${FILE}
   set_value "monitoring.detailed"			"${STORM_FE_MONITORING_DETAILED}"            ${FILE}
-  set_value "proxy.dir"                     "${STORM_PROXY_HOME}"                        ${FILE}
-  set_value "proxy.user"                    "${STORM_USER}"                              ${FILE}
   #set_value "wsdl.file"                     "${STORM_FE_WSDL}"                           ${FILE}
   #==========================================================
 
@@ -183,7 +181,7 @@ function config_storm_frontend () {
   set_value	"STORM_FE_USER"	"${STORM_USER}"	"${SYSCONF_FILE}"
   yaimlog INFO "${FUNCTION}: set STORM_FE_USER as ${STORM_USER}"
 
-  # Activate and restart service 
+  # Activate and restart service
   /sbin/chkconfig --add storm-frontend-server
   /sbin/chkconfig storm-frontend-server on
   yaimlog INFO "${FUNCTION}: Restart service"

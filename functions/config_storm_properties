@@ -32,7 +32,7 @@
 function config_storm_properties_check () {
 
   requires $1 STORM_DB_HOST STORM_DB_PWD STORM_DB_USER \
-              STORM_FRONTEND_HOST_LIST STORM_PROXY_HOME STORM_BACKEND_REST_SERVICES_PORT STORM_GRIDHTTPS_ENABLED \
+              STORM_FRONTEND_HOST_LIST STORM_BACKEND_REST_SERVICES_PORT STORM_GRIDHTTPS_ENABLED \
               STORM_FRONTEND_PORT
   return $?
 
@@ -48,11 +48,11 @@ function config_storm_properties () {
 
   FUNCTION="config_storm_properties"
 
-JARDIR="/usr/share/java/storm-backend-server"
-if [ -f ${JARDIR}/mysql-connector-java-5.1.13-bin.jar ]; then
-  # Download needed jar file
-  rm -f ${JARDIR}/mysql-connector-java-5.1.13-bin.jar
-fi
+  JARDIR="/usr/share/java/storm-backend-server"
+  if [ -f ${JARDIR}/mysql-connector-java-5.1.13-bin.jar ]; then
+    # Download needed jar file
+    rm -f ${JARDIR}/mysql-connector-java-5.1.13-bin.jar
+  fi
 
   yaimlog INFO "${FUNCTION}: Configuration file"
   #----------------------------------------------------------
@@ -62,7 +62,7 @@ fi
   FILE_T="${FILE}.template"                       # Template configuration filename
   FILE_B="${FILE}.bkp_`date +%Y%m%d_%H%M%S`"      # Backup configuration filename (if needed)
   FILE_N="${FILE}.yaimnew_`date +%Y%m%d_%H%M%S`"  # New configuration filename (if needed)
-  
+
   # Configuration file management
   # If not exists, create it from template
   if [ ! -f ${FILE} ]; then
@@ -109,7 +109,6 @@ fi
   set_value "storm.service.request-db.host"     "${STORM_DB_HOST}"                       ${FILE}
   set_value "storm.service.request-db.username" "${STORM_DB_USER}"                       ${FILE}
   set_value "storm.service.request-db.passwd"   "${STORM_DB_PWD}"                        ${FILE}
-  set_value "proxy.home"                        "${STORM_PROXY_HOME}"                    ${FILE}
   set_value "storm.service.SURL.default-ports"  "${STORM_SERVICE_SURL_DEF_PORTS:-8444}"  ${FILE}
   set_value "storm.rest.services.port"		    "${STORM_BACKEND_REST_SERVICES_PORT}"    ${FILE}
   set_value "synchcall.xmlrpc.unsecureServerPort"	"${STORM_BE_XMLRPC_PORT}"   		 ${FILE}
@@ -119,7 +118,7 @@ fi
   set_value "ptg.skip-acl-setup"                "${STORM_PTG_SKIP_ACL_SETUP}"                ${FILE}
 
   # Gridhttps stuff
-  
+
   # Convert in lowercase
   STORM_GRIDHTTPS_ENABLED=`echo ${STORM_GRIDHTTPS_ENABLED} | tr '[:upper:]' '[:lower:]'`
   # Convert spaces to commas

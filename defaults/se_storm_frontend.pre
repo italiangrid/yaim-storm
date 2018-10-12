@@ -17,9 +17,6 @@ STORM_USER=storm
 # Host certificate directory for StoRM Frontend service.
 # OPTIONAL - Default value: /etc/grid-security/${STORM_USER}
 STORM_CERT_DIR=/etc/grid-security/${STORM_USER}
-# Directory used to exchange proxies.
-# OPTIONAL - Default value: /etc/storm/tmp
-STORM_PROXY_HOME=/etc/storm/tmp
 
 # Database settings
 #---------------------------------------------------------
@@ -63,7 +60,7 @@ STORM_FE_MONITORING_ENABLED=true
 # StoRM frontend monitoring time interval. Determines the duration of each monitoring round
 # OPTIONAL -Default value: 60 (seconds)
 STORM_FE_MONITORING_TIME_INTERVAL=60
-# StoRM frontend monitoring detailed flag. Determines the printing of detailed information for each kind of srm call  
+# StoRM frontend monitoring detailed flag. Determines the printing of detailed information for each kind of srm call
 # OPTIONAL - Available values: [true|false] - Default value: false
 STORM_FE_MONITORING_DETAILED=false
 
@@ -101,7 +98,7 @@ STORM_BACKEND_REST_SERVICES_PORT=9998
 # OPTIONAL - Available values: [true|false] - Default value: false
 STORM_FE_USER_BLACKLISTING=false
 # Argus PEP endpoints list
-# OPTIONAL - Mandatory if STORM_FE_USER_BLACKLISTING is true 
+# OPTIONAL - Mandatory if STORM_FE_USER_BLACKLISTING is true
 #ARGUS_PEPD_ENDPOINTS=
 # Argus StoRM resource identifier
 # OPTIONAL - Default value = storm
@@ -112,4 +109,3 @@ STORM_PEPC_RESOURCEID=storm
 # WSDL to be returned to a GET request.
 # OPTIONAL - Default value: /usr/share/wsdl/srm.v2.2.wsdl
 STORM_FE_WSDL=/usr/share/wsdl/srm.v2.2.wsdl
-
