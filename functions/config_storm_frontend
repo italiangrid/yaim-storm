@@ -95,21 +95,13 @@ function config_storm_frontend () {
   # Configuration file management
   STORM_FRONTEND_OVERWRITE=`echo ${STORM_FRONTEND_OVERWRITE} | tr '[:upper:]' '[:lower:]'`   # convert in lowercase
   # If not exists, create it from template
-  if [ ! -f ${FILE} ]; then
-    yaimlog DEBUG "${FUNCTION}: First configuration, create ${FILE} from template ${FILE_T}."
-    cp ${FILE_T} ${FILE}
-  # Else if overwrite is enabled, create backup
-  elif [ "${STORM_FRONTEND_OVERWRITE}" = "true" ]; then
+  if [ -f ${FILE} ]; then
     yaimlog DEBUG "${FUNCTION}: Overwrite old configuration file ${FILE}"
     yaimlog DEBUG "${FUNCTION}: Backup old configuration file in ${FILE_B}"
-    cp ${FILE} ${FILE_B}
-  # Else if overwrite is disabled, create yaimnew
-  else
-    yaimlog DEBUG "${FUNCTION}: Not overwrite old configuration file ${FILE}"
-    yaimlog DEBUG "${FUNCTION}: Create new configuration file in ${FILE_N}"
-    FILE="${FILE_N}"
-    touch ${FILE}
+    mv ${FILE} ${FILE_B}
   fi
+  yaimlog DEBUG "${FUNCTION}: Create new configuration file from template ${FILE_T}"
+  cp ${FILE_T} ${FILE}
 
   yaimlog INFO "${FUNCTION}: Creating ${FILE} ..."
 
@@ -121,35 +113,31 @@ function config_storm_frontend () {
   chmod 640 ${FILE}
 
   #==========================================================
-  set_value "db.host"                       "${STORM_DB_HOST}"                           ${FILE}
-  set_value "db.user"                       "${STORM_DB_USER}"                           ${FILE}
-  set_value "db.passwd"                     "${STORM_DB_PWD}"                            ${FILE}
-  set_value "fe.port"                       "${STORM_FRONTEND_PORT}"                     ${FILE}
-  set_value "fe.threadpool.threads.number"  "${STORM_FE_THREADS_NUMBER}"                 ${FILE}
-  set_value "fe.gsoap.maxpending"           "${STORM_FE_GSOAP_MAXPENDING}"               ${FILE}
-  #set_value "log.filename"                 "${STORM_FE_LOG_FILE}"						 ${FILE}
-  set_value "log.debuglevel"                "${STORM_FE_LOG_LEVEL}"                      ${FILE}
-  #set_value "security.enable.mapping"      "${STORM_FE_ENABLE_MAPPING}"                 ${FILE}
-  #set_value "security.enable.vomscheck"    "${STORM_FE_ENABLE_VOMSCHECK}"               ${FILE}
-  set_value "be.recalltable.port"           "${STORM_BACKEND_REST_SERVICES_PORT}"		 ${FILE}
-  set_value "be.xmlrpc.host"                "${STORM_BACKEND_HOST}"                 	 ${FILE}
-  set_value "be.xmlrpc.port"                "${STORM_BE_XMLRPC_PORT}"                 	 ${FILE}
-  set_value "be.xmlrpc.path"                "${STORM_BE_XMLRPC_PATH}"                 	 ${FILE}
-  set_value "be.xmlrpc.token"               "${STORM_BE_XMLRPC_TOKEN}"               ${FILE}
-  set_value "check.user.blacklisting"		"${STORM_FE_USER_BLACKLISTING}"              ${FILE}
+  set_value "db.host" "${STORM_DB_HOST}" ${FILE}
+  set_value "db.user" "${STORM_DB_USER}" ${FILE}
+  set_value "db.passwd" "${STORM_DB_PWD}" ${FILE}
+  set_value "fe.port" "${STORM_FRONTEND_PORT}" ${FILE}
+  set_value "fe.threadpool.threads.number" "${STORM_FE_THREADS_NUMBER}" ${FILE}
+  set_value "fe.gsoap.maxpending" "${STORM_FE_GSOAP_MAXPENDING}" ${FILE}
+  set_value "log.debuglevel" "${STORM_FE_LOG_LEVEL}" ${FILE}
+  set_value "be.recalltable.port" "${STORM_BACKEND_REST_SERVICES_PORT}" ${FILE}
+  set_value "be.xmlrpc.host" "${STORM_BACKEND_HOST}" ${FILE}
+  set_value "be.xmlrpc.port" "${STORM_BE_XMLRPC_PORT}" ${FILE}
+  set_value "be.xmlrpc.path" "${STORM_BE_XMLRPC_PATH}" ${FILE}
+  set_value "be.xmlrpc.token" "${STORM_BE_XMLRPC_TOKEN}" ${FILE}
+  set_value "check.user.blacklisting" "${STORM_FE_USER_BLACKLISTING}" ${FILE}
   #Storm currently manages a single argus pepd endpoint
   STORM_ARGUS_PEPD_ENDPOINT=$(echo ${ARGUS_PEPD_ENDPOINTS} | awk '{print $1}')
   if ! test -z $STORM_ARGUS_PEPD_ENDPOINT ; then
-    set_value "argus-pepd-endpoint"			"${STORM_ARGUS_PEPD_ENDPOINT}"               ${FILE}
+    set_value "argus-pepd-endpoint" "${STORM_ARGUS_PEPD_ENDPOINT}" ${FILE}
   fi
   if ! test -z ${STORM_PEPC_RESOURCEID} ; then
-    set_value "argus.resource-id"			"${STORM_PEPC_RESOURCEID}"                   ${FILE}
+    set_value "argus.resource-id" "${STORM_PEPC_RESOURCEID}" ${FILE}
   fi
 
-  set_value "monitoring.enabled"			"${STORM_FE_MONITORING_ENABLED}"             ${FILE}
-  set_value "monitoring.timeInterval"		"${STORM_FE_MONITORING_TIME_INTERVAL}"       ${FILE}
-  set_value "monitoring.detailed"			"${STORM_FE_MONITORING_DETAILED}"            ${FILE}
-  #set_value "wsdl.file"                     "${STORM_FE_WSDL}"                           ${FILE}
+  set_value "monitoring.enabled" "${STORM_FE_MONITORING_ENABLED}" ${FILE}
+  set_value "monitoring.timeInterval" "${STORM_FE_MONITORING_TIME_INTERVAL}" ${FILE}
+  set_value "monitoring.detailed" "${STORM_FE_MONITORING_DETAILED}" ${FILE}
   #==========================================================
 
   yaimlog INFO "${FUNCTION}: Successfully created ${FILE} !"
