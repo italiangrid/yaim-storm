@@ -397,11 +397,13 @@ EOF
       yaimlog DEBUG "${FUNCTION}: Create SA ${SA_UPP} prot (rfio)"
       cat >> ${FILE} << EOF
           <prot name="rfio">
+            <id>${PROTOCOL_ID}</id>
             <schema>rfio</schema>
             <host>${SA_RFIO_HOST}</host>
             <port>5001</port>
           </prot>
 EOF
+      ((PROTOCOL_ID++))
     fi
 
     if [ "${SA_ROOT_SUPPORT}" == "true" ]; then
@@ -413,23 +415,58 @@ EOF
             <!--port>1094</port-->
           </prot>
           <prot name="xroot">
+            <id>${PROTOCOL_ID}</id>
             <schema>xroot</schema>
             <host>${SA_ROOT_HOST}</host>
             <!--port>1094</port-->
           </prot>
 EOF
+      ((PROTOCOL_ID++))
     fi
-     
-    if [ "${SA_HTTP_SUPPORT}" == "true" ]; then
-      yaimlog DEBUG "${FUNCTION}: Create SA ${SA_UPP} prot (http)"
-      # gsiftp entry could be multiple
-      COUNTER=1
-      COUNT=$(echo ${SA_GRIDHTTP_POOL_LIST} | awk -F ',' '{print NF}')
-      while [ $COUNTER -le $COUNT ]; do
-        SA_GRIDHTTP_POOL=$(echo ${SA_GRIDHTTP_POOL_LIST} | awk -v current_index=$COUNTER -F ',' '{print $current_index}')
-        if [ ! -z "${SA_GRIDHTTP_POOL}" ]; then
-          SA_GRIDHTTP_POOL_HOST=`echo ${SA_GRIDHTTP_POOL} | awk '{print $1}'`
-          cat >> ${FILE} << EOF
+
+    if [ -z ${STORM_WEBDAV_POOL_LIST} ]; then
+
+        #### NEW LOGIC ####
+        # Parse STORM_WEBDAV_POOL_LIST and add the transfer protocols found
+        yaimlog DEBUG "${FUNCTION}: Parse WebDAV end-points for SA ${SA_UPP}"
+        counter=1
+        count=$(echo ${STORM_WEBDAV_POOL_LIST} | awk -F ',' '{print NF}')
+        while [ $counter -le $count ]; do
+            endpoint=$(echo ${STORM_WEBDAV_POOL_LIST} | awk -v current_index=$counter -F ',' '{print $current_index}')
+            # extract the protocol
+            schema=$(echo $endpoint | awk -F ':' '{print $1}')
+            # extract hostname
+            host=$(echo $endpoint | sed -e "s/$schema:\/\/\(.*\):\(.*\)/\1/")
+            # extract port
+            port=$(echo $endpoint | sed -e "s/$schema:\/\/\(.*\):\(.*\)/\2/")
+            yaimlog DEBUG "${FUNCTION}: endpoint: '${endpoint}' => { schema: '${schema}', host: '${host}', port: '${port}' }"
+            # append transfer protocol
+            cat >> ${FILE} << EOF
+          <prot name="${schema}">
+            <id>${PROTOCOL_ID}</id>
+            <schema>${schema}</schema>
+            <host>${host}</host>
+            <port>${port}</port>
+          </prot>
+EOF
+            ((PROTOCOL_ID++))
+            let counter=counter+1
+        done
+
+    else
+
+        #### OLD LOGIC ####
+
+        if [ "${SA_HTTP_SUPPORT}" == "true" ]; then
+            yaimlog DEBUG "${FUNCTION}: Create SA ${SA_UPP} prot (http)"
+            # webdav entry could be multiple
+            COUNTER=1
+            COUNT=$(echo ${SA_GRIDHTTP_POOL_LIST} | awk -F ',' '{print NF}')
+            while [ $COUNTER -le $COUNT ]; do
+                SA_GRIDHTTP_POOL=$(echo ${SA_GRIDHTTP_POOL_LIST} | awk -v current_index=$COUNTER -F ',' '{print $current_index}')
+                if [ ! -z "${SA_GRIDHTTP_POOL}" ]; then
+                    SA_GRIDHTTP_POOL_HOST=`echo ${SA_GRIDHTTP_POOL} | awk '{print $1}'`
+                    cat >> ${FILE} << EOF
           <prot name="http">
             <id>$PROTOCOL_ID</id>
             <schema>http</schema>
@@ -437,23 +474,23 @@ EOF
             <port>${SA_HTTP_PORT}</port>
           </prot>
 EOF
-          ((PROTOCOL_ID++))
-          let COUNTER=COUNTER+1
+                    ((PROTOCOL_ID++))
+                    let COUNTER=COUNTER+1
+                fi
+            done
+            ((PROTOCOL_ID++))
         fi
-      done
-    fi
 
-
-    if [ "${SA_HTTPS_SUPPORT}" == "true" ]; then
-      yaimlog DEBUG "${FUNCTION}: Create SA ${SA_UPP} prot (https)"
-      # gsiftp entry could be multiple
-      COUNTER=1
-      COUNT=$(echo ${SA_GRIDHTTPS_POOL_LIST} | awk -F ',' '{print NF}')
-      while [ $COUNTER -le $COUNT ]; do
-        SA_GRIDHTTPS_POOL=$(echo ${SA_GRIDHTTPS_POOL_LIST} | awk -v current_index=$COUNTER -F ',' '{print $current_index}')
-        if [ ! -z "${SA_GRIDHTTPS_POOL}" ]; then
-          SA_GRIDHTTPS_POOL_HOST=`echo ${SA_GRIDHTTPS_POOL} | awk '{print $1}'`
-          cat >> ${FILE} << EOF
+        if [ "${SA_HTTPS_SUPPORT}" == "true" ]; then
+            yaimlog DEBUG "${FUNCTION}: Create SA ${SA_UPP} prot (https)"
+            # webdav entry could be multiple
+            COUNTER=1
+            COUNT=$(echo ${SA_GRIDHTTPS_POOL_LIST} | awk -F ',' '{print NF}')
+            while [ $COUNTER -le $COUNT ]; do
+                SA_GRIDHTTPS_POOL=$(echo ${SA_GRIDHTTPS_POOL_LIST} | awk -v current_index=$COUNTER -F ',' '{print $current_index}')
+                if [ ! -z "${SA_GRIDHTTPS_POOL}" ]; then
+                    SA_GRIDHTTPS_POOL_HOST=`echo ${SA_GRIDHTTPS_POOL} | awk '{print $1}'`
+                    cat >> ${FILE} << EOF
           <prot name="https">
             <id>$PROTOCOL_ID</id>
             <schema>https</schema>
@@ -461,10 +498,11 @@ EOF
             <port>${SA_HTTPS_PORT}</port>
           </prot>
 EOF
-          ((PROTOCOL_ID++))
-          let COUNTER=COUNTER+1
+                    ((PROTOCOL_ID++))
+                    let COUNTER=COUNTER+1
+                fi
+            done
         fi
-      done
     fi
 
     cat >> ${FILE} << EOF

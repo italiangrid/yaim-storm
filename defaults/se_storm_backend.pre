@@ -166,3 +166,11 @@ STORM_ENDPOINT_CAPABILITY="data.management.storage"
 
 # Default PTG ACL setup strategy
 STORM_PTG_SKIP_ACL_SETUP="false"
+
+# WebDAV servers pool list. A comma separated list of full end-points.
+# Its meaning is:
+# - not declared => keep old publishing logic with STORM_GRIDHTTPS_PUBLIC_HOST etc
+# - declared but empty => assume no WebDAV end-points enabled
+# - declared with value => value is a comma separated list of full WebDAV end-points
+#   e.g. http://storm.example:8085,https://storm.example:8443
+#STORM_WEBDAV_POOL_LIST=http://${STORM_BACKEND_HOST}:8085,https://${STORM_BACKEND_HOST}:8443
