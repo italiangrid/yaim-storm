@@ -16,7 +16,6 @@ defaultconfdir = $(prefix)/yaim/defaults
 dist_defaultconf_DATA = se_storm_backend.pre \
    se_storm_frontend.pre \
    se_storm_gridftp.pre \
-   se_storm_gridhttps.pre \
    se_storm_webdav.pre
 
 MAINTAINERCLEANFILES = Makefile.in

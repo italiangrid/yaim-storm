@@ -16,6 +16,5 @@ examplesconfdir = $(prefix)/yaim/examples/siteinfo/services/
 dist_examplesconf_DATA = se_storm_backend \
    se_storm_frontend \
    se_storm_gridftp \
-   se_storm_gridhttps
 
 MAINTAINERCLEANFILES = Makefile.in
