@@ -55,7 +55,7 @@ function config_storm_namespace () {
   FILE_T="${FILE}.template"                       # Template configuration filename
   FILE_B="${FILE}.bkp_`date +%Y%m%d_%H%M%S`"      # Backup configuration filename (if needed)
   FILE_N="${FILE}.yaimnew_`date +%Y%m%d_%H%M%S`"  # New configuration filename (if needed)
-  
+
   # Configuration file management
   STORM_NAMESPACE_OVERWRITE=`echo ${STORM_NAMESPACE_OVERWRITE} | tr '[:upper:]' '[:lower:]'`   # convert in lowercase
   # If not exists, create it empty
@@ -132,7 +132,7 @@ EOF
            SA_FSSPACESYSTEM=MockSpaceSystem
         else
            SA_FSSPACESYSTEM=GPFSSpaceSystem
-        fi 
+        fi
         ;;
       *)
         yaimlog ERROR "${FUNCTION}: Invalid filesystem type '${SA_FSTYPE}'"
@@ -196,7 +196,7 @@ EOF
 
     if ! [ -z "${SA_TOKEN}" ]; then
       yaimlog DEBUG "${FUNCTION}: Create SA ${SA_UPP} space-token-description (${SA_TOKEN})"
-      cat >> ${FILE} << EOF 
+      cat >> ${FILE} << EOF
       <space-token-description>${SA_TOKEN}</space-token-description>
 EOF
     fi
@@ -352,7 +352,7 @@ EOF
             <quotaElement>
               ${SA_QUOTA_ELEMENT}
             </quotaElement>
-        </quota> 
+        </quota>
 EOF
     fi
 
@@ -372,7 +372,7 @@ EOF
     PROTOCOL_ID=0
     if [ "${SA_GRIDFTP_SUPPORT}" == "true" ]; then
       yaimlog DEBUG "${FUNCTION}: Create SA ${SA_UPP} prot (gsiftp)"
-      # gsiftp entry could be multiple  
+      # gsiftp entry could be multiple
       COUNTER=1
       COUNT=$(echo ${SA_GRIDFTP_POOL_LIST} | awk -F ',' '{print NF}')
       while [ $COUNTER -le $COUNT ]; do
@@ -424,7 +424,7 @@ EOF
       ((PROTOCOL_ID++))
     fi
 
-    if [ -z ${STORM_WEBDAV_POOL_LIST} ]; then
+    if [ ! -z ${STORM_WEBDAV_POOL_LIST+x} ]; then
 
         #### NEW LOGIC ####
         # Parse STORM_WEBDAV_POOL_LIST and add the transfer protocols found
@@ -583,7 +583,7 @@ EOF
     x=STORM_${SA_UPP}_ACCESSPOINT;             SA_ACCESSPOINT=${!x:-/${SA_LOW}}
 
     access_point_counter=0
-    
+
     for access_point in ${SA_ACCESSPOINT}; do
         map_rule_name="${SA_LOW}-maprule-${access_point_counter}"
         yaimlog DEBUG "${FUNCTION}: Creating ${SA_UPP} map-rule (${map_rule_name}) for access point: ${access_point}"
@@ -604,14 +604,14 @@ EOF
 EOF
 
   for SA in $STORM_STORAGEAREA_LIST; do
-   
+
     # Convert case
     SA_UPP=`echo ${SA} | tr '[:lower:]' '[:upper:]'`
     SA_LOW=`echo ${SA} | tr '[:upper:]' '[:lower:]'`
 
     # Remove DNS-like characters from SA_UPP names
     SA_UPP=`echo ${SA_UPP} | sed -e 's/-//g' -e 's/\.//g'`
- 
+
     x=STORM_${SA_UPP}_VONAME;                  SA_VONAME=${!x:-${SA_LOW}}
     x=STORM_${SA_UPP}_ANONYMOUS_HTTP_READ;     SA_ANONYMOUS_HTTP_READ=${!x:-${STORM_ANONYMOUS_HTTP_READ}}
     SA_DN_REGEX=""
@@ -642,9 +642,9 @@ EOF
     if [ -z "${SA_DN_REGEX}" ]; then
        SA_DN_REGEX="*"
     fi
-    
+
     yaimlog DEBUG "${FUNCTION}: Create SA ${SA_UPP} app-rule (${SA_LOW})"
-    
+
     cat >> ${FILE} << EOF
     <app-rule name="${SA_LOW}-rule">
       <subjects>
@@ -652,7 +652,7 @@ EOF
         <vo-name>${SA_VONAME}</vo-name>
       </subjects>
       <approachable-fs>${SA_UPP}-FS</approachable-fs>
-      <anonymous-http-read>${SA_ANONYMOUS_HTTP_READ}</anonymous-http-read>    
+      <anonymous-http-read>${SA_ANONYMOUS_HTTP_READ}</anonymous-http-read>
     </app-rule>
 EOF
   done
