@@ -48,13 +48,13 @@ function remove_file() {
 }
 
 function remove_old_cron_files() {
-    
+
   remove_file "/etc/cron.d/glite-info-dynamic-storm"
   remove_file "/etc/cron.d/glite-info-glue2-dynamic-storm"
 }
 
 function remove_old_bdii_files() {
-  
+
   # remove v1.7.6 files
   remove_file "/var/lib/bdii/gip/ldif/static-file-storm.ldif*"
   remove_file "/var/lib/bdii/gip/ldif/static-file-glue2-storm.ldif*"
@@ -78,12 +78,22 @@ function config_gip_storm() {
   FILE="/etc/storm/info-provider/storm-yaim-variables.conf"
   yaimlog INFO "${FUNCTION}: Creating ${FILE} ..."
   set | egrep '^STORM|^SITE_NAME|^VOS|^MY_DOMAIN' | sort > ${FILE}
-  chgrp ldap /etc/storm/info-provider/storm-yaim-variables.conf 
+  chgrp ldap /etc/storm/info-provider/storm-yaim-variables.conf
   chmod 450 ${FILE}
 
   LOGGING_LEVEL=20
   if [ ${YAIM_LOGGING_LEVEL} == DEBUG ]; then
     LOGGING_LEVEL=10
+  fi
+
+  if [ ${STORM_GRIDHTTPS_ENABLED} ]
+  then
+    (cat << EOF
+      STORM_GRIDHTTPS_ENABLED won't be supported by next releases.
+      Please use STORM_WEBDAV_POOL_LIST instead.
+      Read more info at http://italiangrid.github.io/storm/release-notes/StoRM-v1.11.15.html
+EOF
+    ) | yaimlog WARNING
   fi
 
   /usr/libexec/storm-info-provider -v ${LOGGING_LEVEL} configure -f ${FILE}

@@ -47,11 +47,6 @@ function config_storm_dir () {
 
   FUNCTION="config_storm_dir"
 
-  # Create and change ownership for the StoRM proxy directory
-  [ -d ${STORM_PROXY_HOME} ] || (yaimlog INFO "${FUNCTION}: Creating StoRM proxy directory"; mkdir -p ${STORM_PROXY_HOME})
-  yaimlog DEBUG "${FUNCTION}: Recursively set '${STORM_USER}:${STORM_USER}' ownership for ${STORM_PROXY_HOME}"
-  chown -R ${STORM_USER}:${STORM_USER} ${STORM_PROXY_HOME}
-
   # Create and change ownership/permission for the Storage Area directories
   for SA in $STORM_STORAGEAREA_LIST; do
 
@@ -66,11 +61,11 @@ function config_storm_dir () {
     dir=${!x:-${STORM_DEFAULT_ROOT}/${SA_LOW}}
 
     if [ ! -d ${dir} ]; then
-      yaimlog INFO "${FUNCTION}: Creating storage area folder ${dir}"; 
+      yaimlog INFO "${FUNCTION}: Creating storage area folder ${dir}";
       mkdir -p ${dir};
-      yaimlog DEBUG "${FUNCTION}: Recursively set '${STORM_USER}:${STORM_USER}' ownership for ${dir}"; 
+      yaimlog DEBUG "${FUNCTION}: Recursively set '${STORM_USER}:${STORM_USER}' ownership for ${dir}";
       chown -RL ${STORM_USER}:${STORM_USER} ${dir};
-      yaimlog DEBUG "${FUNCTION}: Recursively unset world permissions for ${dir}, adding group read permission"; 
+      yaimlog DEBUG "${FUNCTION}: Recursively unset world permissions for ${dir}, adding group read permission";
       chmod -R o-rwx,g+r ${dir}
     else
       owner=`ls -lLdatr ${dir} | awk '{print $3}'`

@@ -97,7 +97,14 @@ function config_storm_backend () {
   /sbin/service storm-backend-server stop
   /sbin/service storm-backend-server start
 
-  # Exit with success
-  return 0
-
+  if [ $? -eq 0 ]
+  then
+    yaimlog INFO "${FUNCTION}: StoRM Backend started successfully"
+    # Wait 1s to avoid overlapping of next log message with service restart output
+    sleep 1s
+    return 0
+  else
+    yaimlog ERROR "${FUNCTION}: StoRM Backend: failed to start daemon"
+    return 1
+  fi
 }

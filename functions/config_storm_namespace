@@ -55,7 +55,7 @@ function config_storm_namespace () {
   FILE_T="${FILE}.template"                       # Template configuration filename
   FILE_B="${FILE}.bkp_`date +%Y%m%d_%H%M%S`"      # Backup configuration filename (if needed)
   FILE_N="${FILE}.yaimnew_`date +%Y%m%d_%H%M%S`"  # New configuration filename (if needed)
-  
+
   # Configuration file management
   STORM_NAMESPACE_OVERWRITE=`echo ${STORM_NAMESPACE_OVERWRITE} | tr '[:upper:]' '[:lower:]'`   # convert in lowercase
   # If not exists, create it empty
@@ -132,7 +132,7 @@ EOF
            SA_FSSPACESYSTEM=MockSpaceSystem
         else
            SA_FSSPACESYSTEM=GPFSSpaceSystem
-        fi 
+        fi
         ;;
       *)
         yaimlog ERROR "${FUNCTION}: Invalid filesystem type '${SA_FSTYPE}'"
@@ -196,7 +196,7 @@ EOF
 
     if ! [ -z "${SA_TOKEN}" ]; then
       yaimlog DEBUG "${FUNCTION}: Create SA ${SA_UPP} space-token-description (${SA_TOKEN})"
-      cat >> ${FILE} << EOF 
+      cat >> ${FILE} << EOF
       <space-token-description>${SA_TOKEN}</space-token-description>
 EOF
     fi
@@ -352,7 +352,7 @@ EOF
             <quotaElement>
               ${SA_QUOTA_ELEMENT}
             </quotaElement>
-        </quota> 
+        </quota>
 EOF
     fi
 
@@ -372,7 +372,7 @@ EOF
     PROTOCOL_ID=0
     if [ "${SA_GRIDFTP_SUPPORT}" == "true" ]; then
       yaimlog DEBUG "${FUNCTION}: Create SA ${SA_UPP} prot (gsiftp)"
-      # gsiftp entry could be multiple  
+      # gsiftp entry could be multiple
       COUNTER=1
       COUNT=$(echo ${SA_GRIDFTP_POOL_LIST} | awk -F ',' '{print NF}')
       while [ $COUNTER -le $COUNT ]; do
@@ -397,11 +397,13 @@ EOF
       yaimlog DEBUG "${FUNCTION}: Create SA ${SA_UPP} prot (rfio)"
       cat >> ${FILE} << EOF
           <prot name="rfio">
+            <id>${PROTOCOL_ID}</id>
             <schema>rfio</schema>
             <host>${SA_RFIO_HOST}</host>
             <port>5001</port>
           </prot>
 EOF
+      ((PROTOCOL_ID++))
     fi
 
     if [ "${SA_ROOT_SUPPORT}" == "true" ]; then
@@ -413,23 +415,58 @@ EOF
             <!--port>1094</port-->
           </prot>
           <prot name="xroot">
+            <id>${PROTOCOL_ID}</id>
             <schema>xroot</schema>
             <host>${SA_ROOT_HOST}</host>
             <!--port>1094</port-->
           </prot>
 EOF
+      ((PROTOCOL_ID++))
     fi
-     
-    if [ "${SA_HTTP_SUPPORT}" == "true" ]; then
-      yaimlog DEBUG "${FUNCTION}: Create SA ${SA_UPP} prot (http)"
-      # gsiftp entry could be multiple
-      COUNTER=1
-      COUNT=$(echo ${SA_GRIDHTTP_POOL_LIST} | awk -F ',' '{print NF}')
-      while [ $COUNTER -le $COUNT ]; do
-        SA_GRIDHTTP_POOL=$(echo ${SA_GRIDHTTP_POOL_LIST} | awk -v current_index=$COUNTER -F ',' '{print $current_index}')
-        if [ ! -z "${SA_GRIDHTTP_POOL}" ]; then
-          SA_GRIDHTTP_POOL_HOST=`echo ${SA_GRIDHTTP_POOL} | awk '{print $1}'`
-          cat >> ${FILE} << EOF
+
+    if [ ! -z ${STORM_WEBDAV_POOL_LIST+x} ]; then
+
+        #### NEW LOGIC ####
+        # Parse STORM_WEBDAV_POOL_LIST and add the transfer protocols found
+        yaimlog DEBUG "${FUNCTION}: Parse WebDAV end-points for SA ${SA_UPP}"
+        counter=1
+        count=$(echo ${STORM_WEBDAV_POOL_LIST} | awk -F ',' '{print NF}')
+        while [ $counter -le $count ]; do
+            endpoint=$(echo ${STORM_WEBDAV_POOL_LIST} | awk -v current_index=$counter -F ',' '{print $current_index}')
+            # extract the protocol
+            schema=$(echo $endpoint | awk -F ':' '{print $1}')
+            # extract hostname
+            host=$(echo $endpoint | sed -e "s/$schema:\/\/\(.*\):\(.*\)/\1/")
+            # extract port
+            port=$(echo $endpoint | sed -e "s/$schema:\/\/\(.*\):\(.*\)/\2/")
+            yaimlog DEBUG "${FUNCTION}: endpoint: '${endpoint}' => { schema: '${schema}', host: '${host}', port: '${port}' }"
+            # append transfer protocol
+            cat >> ${FILE} << EOF
+          <prot name="${schema}">
+            <id>${PROTOCOL_ID}</id>
+            <schema>${schema}</schema>
+            <host>${host}</host>
+            <port>${port}</port>
+          </prot>
+EOF
+            ((PROTOCOL_ID++))
+            let counter=counter+1
+        done
+
+    else
+
+        #### OLD LOGIC ####
+
+        if [ "${SA_HTTP_SUPPORT}" == "true" ]; then
+            yaimlog DEBUG "${FUNCTION}: Create SA ${SA_UPP} prot (http)"
+            # webdav entry could be multiple
+            COUNTER=1
+            COUNT=$(echo ${SA_GRIDHTTP_POOL_LIST} | awk -F ',' '{print NF}')
+            while [ $COUNTER -le $COUNT ]; do
+                SA_GRIDHTTP_POOL=$(echo ${SA_GRIDHTTP_POOL_LIST} | awk -v current_index=$COUNTER -F ',' '{print $current_index}')
+                if [ ! -z "${SA_GRIDHTTP_POOL}" ]; then
+                    SA_GRIDHTTP_POOL_HOST=`echo ${SA_GRIDHTTP_POOL} | awk '{print $1}'`
+                    cat >> ${FILE} << EOF
           <prot name="http">
             <id>$PROTOCOL_ID</id>
             <schema>http</schema>
@@ -437,23 +474,23 @@ EOF
             <port>${SA_HTTP_PORT}</port>
           </prot>
 EOF
-          ((PROTOCOL_ID++))
-          let COUNTER=COUNTER+1
+                    ((PROTOCOL_ID++))
+                    let COUNTER=COUNTER+1
+                fi
+            done
+            ((PROTOCOL_ID++))
         fi
-      done
-    fi
 
-
-    if [ "${SA_HTTPS_SUPPORT}" == "true" ]; then
-      yaimlog DEBUG "${FUNCTION}: Create SA ${SA_UPP} prot (https)"
-      # gsiftp entry could be multiple
-      COUNTER=1
-      COUNT=$(echo ${SA_GRIDHTTPS_POOL_LIST} | awk -F ',' '{print NF}')
-      while [ $COUNTER -le $COUNT ]; do
-        SA_GRIDHTTPS_POOL=$(echo ${SA_GRIDHTTPS_POOL_LIST} | awk -v current_index=$COUNTER -F ',' '{print $current_index}')
-        if [ ! -z "${SA_GRIDHTTPS_POOL}" ]; then
-          SA_GRIDHTTPS_POOL_HOST=`echo ${SA_GRIDHTTPS_POOL} | awk '{print $1}'`
-          cat >> ${FILE} << EOF
+        if [ "${SA_HTTPS_SUPPORT}" == "true" ]; then
+            yaimlog DEBUG "${FUNCTION}: Create SA ${SA_UPP} prot (https)"
+            # webdav entry could be multiple
+            COUNTER=1
+            COUNT=$(echo ${SA_GRIDHTTPS_POOL_LIST} | awk -F ',' '{print NF}')
+            while [ $COUNTER -le $COUNT ]; do
+                SA_GRIDHTTPS_POOL=$(echo ${SA_GRIDHTTPS_POOL_LIST} | awk -v current_index=$COUNTER -F ',' '{print $current_index}')
+                if [ ! -z "${SA_GRIDHTTPS_POOL}" ]; then
+                    SA_GRIDHTTPS_POOL_HOST=`echo ${SA_GRIDHTTPS_POOL} | awk '{print $1}'`
+                    cat >> ${FILE} << EOF
           <prot name="https">
             <id>$PROTOCOL_ID</id>
             <schema>https</schema>
@@ -461,10 +498,11 @@ EOF
             <port>${SA_HTTPS_PORT}</port>
           </prot>
 EOF
-          ((PROTOCOL_ID++))
-          let COUNTER=COUNTER+1
+                    ((PROTOCOL_ID++))
+                    let COUNTER=COUNTER+1
+                fi
+            done
         fi
-      done
     fi
 
     cat >> ${FILE} << EOF
@@ -518,100 +556,7 @@ EOF
     elif [ "${SA_GRIDFTP_SUPPORT}" == "true" ] && [ ${SA_GRIDFTP_POOL_NUMBER} == 1 ]; then
       ((PROTOCOL_ID++))
     fi
-    # http entry could be use a load balancing strategy
-    SA_GRIDHTTP_POOL_NUMBER=`echo ${SA_GRIDHTTP_POOL_LIST} | awk 'BEGIN{FS=","}{print NF}'`
-    if [[ ${SA_GRIDHTTP_POOL_NUMBER} > 1 ]]; then
-      yaimlog DEBUG "${FUNCTION}: Create SA ${SA_UPP} http pool"
-      cat >> ${FILE} << EOF
-        <pool>
-          <balance-strategy>${SA_GRIDHTTP_POOL_STRATEGY}</balance-strategy>
-          <members>
-EOF
-      # 'weight' strategy case
-      if [ ${SA_GRIDHTTP_POOL_STRATEGY} = 'weight' ]; then
-        COUNTER=1
-        COUNT=$(echo ${SA_GRIDHTTP_POOL_LIST} | awk -F ',' '{print NF}')
-        while [ $COUNTER -le $COUNT ]; do
-          SA_GRIDHTTP_POOL=$(echo ${SA_GRIDHTTP_POOL_LIST} | awk -v current_index=$COUNTER -F ',' '{print $current_index}')
-          if [ ! -z "${SA_GRIDHTTP_POOL}" ]; then
-            SA_GRIDHTTP_POOL_WEIGHT=`echo ${SA_GRIDHTTP_POOL} | awk '{print $2}'`
-            # set to 1 if weight is null
-            if [ -z "${SA_GRIDHTTP_POOL_WEIGHT}" ]; then
-              SA_GRIDHTTP_POOL_WEIGHT=100
-            fi
-            cat >> ${FILE} << EOF
-            <member member-id="$PROTOCOL_ID"><weight>${SA_GRIDHTTP_POOL_WEIGHT}</weight></member>
-EOF
-            ((PROTOCOL_ID++))
-            let COUNTER=COUNTER+1
-          fi
-        done
-      # other strategy cases
-      else
-        i=0
-        for SA_GRIDHTTP_POOL in $(echo ${SA_GRIDHTTP_POOL_LIST} | awk 'BEGIN{FS=","}{for (i=1; i<=NF; i++) print $i}'); do
-          if [ ! -z "${SA_GRIDHTTP_POOL}" ]; then
-            cat >> ${FILE} << EOF
-            <member member-id="$PROTOCOL_ID"></member>
-EOF
-            ((PROTOCOL_ID++))
-          fi
-        done
-      fi
-      cat >> ${FILE} << EOF
-          </members>
-       </pool>
-EOF
-    elif [ "${SA_HTTP_SUPPORT}" == "true" ] && [ ${SA_GRIDHTTP_POOL_NUMBER} == 1 ]; then
-      ((PROTOCOL_ID++))
-    fi
-    # https entry could be use a load balancing strategy
-    SA_GRIDHTTPS_POOL_NUMBER=`echo ${SA_GRIDHTTPS_POOL_LIST} | awk 'BEGIN{FS=","}{print NF}'`
-    if [[ ${SA_GRIDHTTPS_POOL_NUMBER} > 1 ]]; then
-      yaimlog DEBUG "${FUNCTION}: Create SA ${SA_UPP} https pool"
-      cat >> ${FILE} << EOF
-        <pool>
-          <balance-strategy>${SA_GRIDHTTPS_POOL_STRATEGY}</balance-strategy>
-          <members>
-EOF
-      # 'weight' strategy case
-      if [ ${SA_GRIDHTTPS_POOL_STRATEGY} = 'weight' ]; then
-        COUNTER=1
-        COUNT=$(echo ${SA_GRIDHTTPS_POOL_LIST} | awk -F ',' '{print NF}')
-        while [ $COUNTER -le $COUNT ]; do
-          SA_GRIDHTTPS_POOL=$(echo ${SA_GRIDHTTPS_POOL_LIST} | awk -v current_index=$COUNTER -F ',' '{print $current_index}')
-          if [ ! -z "${SA_GRIDHTTPS_POOL}" ]; then
-            SA_GRIDHTTPS_POOL_WEIGHT=`echo ${SA_GRIDHTTPS_POOL} | awk '{print $2}'`
-            # set to 1 if weight is null
-            if [ -z "${SA_GRIDHTTPS_POOL_WEIGHT}" ]; then
-              SA_GRIDHTTPS_POOL_WEIGHT=100
-            fi
-            cat >> ${FILE} << EOF
-            <member member-id="$PROTOCOL_ID"><weight>${SA_GRIDHTTPS_POOL_WEIGHT}</weight></member>
-EOF
-            ((PROTOCOL_ID++))
-            let COUNTER=COUNTER+1
-          fi
-        done
-      # other strategy cases
-      else
-        i=0
-        for SA_GRIDHTTPS_POOL in $(echo ${SA_GRIDHTTPS_POOL_LIST} | awk 'BEGIN{FS=","}{for (i=1; i<=NF; i++) print $i}'); do
-          if [ ! -z "${SA_GRIDHTTPS_POOL}" ]; then
-            cat >> ${FILE} << EOF
-            <member member-id="$PROTOCOL_ID"></member>
-EOF
-            ((PROTOCOL_ID++))
-          fi
-        done
-      fi
-      cat >> ${FILE} << EOF
-          </members>
-       </pool>
-EOF
-    elif [ "${SA_HTTPS_SUPPORT}" == "true" ] && [ ${SA_GRIDHTTPS_POOL_NUMBER} == 1 ]; then
-      ((PROTOCOL_ID++))
-    fi
+
     cat >> ${FILE} << EOF
       </capabilities>
     </filesystem>
@@ -638,7 +583,7 @@ EOF
     x=STORM_${SA_UPP}_ACCESSPOINT;             SA_ACCESSPOINT=${!x:-/${SA_LOW}}
 
     access_point_counter=0
-    
+
     for access_point in ${SA_ACCESSPOINT}; do
         map_rule_name="${SA_LOW}-maprule-${access_point_counter}"
         yaimlog DEBUG "${FUNCTION}: Creating ${SA_UPP} map-rule (${map_rule_name}) for access point: ${access_point}"
@@ -659,14 +604,14 @@ EOF
 EOF
 
   for SA in $STORM_STORAGEAREA_LIST; do
-   
+
     # Convert case
     SA_UPP=`echo ${SA} | tr '[:lower:]' '[:upper:]'`
     SA_LOW=`echo ${SA} | tr '[:upper:]' '[:lower:]'`
 
     # Remove DNS-like characters from SA_UPP names
     SA_UPP=`echo ${SA_UPP} | sed -e 's/-//g' -e 's/\.//g'`
- 
+
     x=STORM_${SA_UPP}_VONAME;                  SA_VONAME=${!x:-${SA_LOW}}
     x=STORM_${SA_UPP}_ANONYMOUS_HTTP_READ;     SA_ANONYMOUS_HTTP_READ=${!x:-${STORM_ANONYMOUS_HTTP_READ}}
     SA_DN_REGEX=""
@@ -697,9 +642,9 @@ EOF
     if [ -z "${SA_DN_REGEX}" ]; then
        SA_DN_REGEX="*"
     fi
-    
+
     yaimlog DEBUG "${FUNCTION}: Create SA ${SA_UPP} app-rule (${SA_LOW})"
-    
+
     cat >> ${FILE} << EOF
     <app-rule name="${SA_LOW}-rule">
       <subjects>
@@ -707,7 +652,7 @@ EOF
         <vo-name>${SA_VONAME}</vo-name>
       </subjects>
       <approachable-fs>${SA_UPP}-FS</approachable-fs>
-      <anonymous-http-read>${SA_ANONYMOUS_HTTP_READ}</anonymous-http-read>    
+      <anonymous-http-read>${SA_ANONYMOUS_HTTP_READ}</anonymous-http-read>
     </app-rule>
 EOF
   done

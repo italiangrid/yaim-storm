@@ -17,9 +17,6 @@ STORM_USER=storm
 # Host certificate directory for StoRM Backend service.
 # OPTIONAL - Default value: /etc/grid-security/${STORM_USER}
 STORM_CERT_DIR=/etc/grid-security/${STORM_USER}
-# Directory used to exchange proxies.
-# OPTIONAL - Default value: /etc/storm/tmp
-STORM_PROXY_HOME=/etc/storm/tmp
 # StoRM Frontend service public host.
 # OPTIONAL - Default value: ${STORM_BACKEND_HOST}
 STORM_FRONTEND_PUBLIC_HOST=${STORM_BACKEND_HOST}
@@ -80,7 +77,7 @@ STORM_INFO_FILE_SUPPORT=true
 # OPTIONAL - Available values: [true|false] - Default value: true
 STORM_INFO_GRIDFTP_SUPPORT=true
 # GRIDFTP servers pool list. A comma separated list of hosts
-# OPTIONAL - Default value: ${STORM_BACKEND_HOST} 
+# OPTIONAL - Default value: ${STORM_BACKEND_HOST}
 STORM_GRIDFTP_POOL_LIST=${STORM_BACKEND_HOST}
 # Protocol: rfio
 # OPTIONAL - Available values: [true|false] - Default value: false
@@ -95,13 +92,13 @@ STORM_INFO_ROOT_SUPPORT=false
 # OPTIONAL - Default value: ${STORM_BACKEND_HOST}
 STORM_ROOT_HOST=${STORM_BACKEND_HOST}
 # GRIDHTTP servers pool list. A comma separated list of hosts
-# OPTIONAL - Default value: ${STORM_BACKEND_HOST} 
+# OPTIONAL - Default value: ${STORM_BACKEND_HOST}
 STORM_GRIDHTTP_POOL_LIST=${STORM_BACKEND_HOST}
 # Protocol: http
 # OPTIONAL - Available values: [true|false] - Default value: false
 STORM_INFO_HTTP_SUPPORT=false
 # GRIDHTTPS servers pool list. A comma separated list of hosts
-# OPTIONAL - Default value: ${STORM_BACKEND_HOST} 
+# OPTIONAL - Default value: ${STORM_BACKEND_HOST}
 STORM_GRIDHTTPS_POOL_LIST=${STORM_BACKEND_HOST}
 # Protocol: https
 # OPTIONAL - Available values: [true|false] - Default value: false
@@ -163,9 +160,17 @@ STORM_INFO_USE_GPFS_PREALLOCATION=false
 # Default resource bdii settings
 #---------------------------------------------------------
 # Endpoint maturity
-STORM_ENDPOINT_QUALITY_LEVEL="2" 
+STORM_ENDPOINT_QUALITY_LEVEL="2"
 # Capability according to OGSA
 STORM_ENDPOINT_CAPABILITY="data.management.storage"
 
 # Default PTG ACL setup strategy
 STORM_PTG_SKIP_ACL_SETUP="false"
+
+# WebDAV servers pool list. A comma separated list of full end-points.
+# Its meaning is:
+# - not declared => keep old publishing logic with STORM_GRIDHTTPS_PUBLIC_HOST etc
+# - declared but empty => assume no WebDAV end-points enabled
+# - declared with value => value is a comma separated list of full WebDAV end-points
+#   e.g. http://storm.example:8085,https://storm.example:8443
+#STORM_WEBDAV_POOL_LIST=http://${STORM_BACKEND_HOST}:8085,https://${STORM_BACKEND_HOST}:8443

@@ -25,7 +25,8 @@ for SA in ${STORM_STORAGEAREA_LIST}; do
   x=STORM_${SA_UPP}_ACCESSPOINT;             SA_ACCESSPOINT=${!x:-/${SA_LOW}}
   x=STORM_${SA_UPP}_VONAME;                  SA_VONAME=${!x:-${SA_LOW}}
   x=STORM_${SA_UPP}_ANONYMOUS_HTTP_READ;     SA_ANONYMOUS_HTTP_READ=${!x:-${STORM_ANONYMOUS_HTTP_READ}}
-  x=STORM_${SA_UPP}_AUTHENTICATED_HTTP_READ;     SA_AUTHENTICATED_HTTP_READ=${!x:-${STORM_AUTHENTICATED_HTTP_READ}}
+  x=STORM_${SA_UPP}_AUTHENTICATED_HTTP_READ; SA_AUTHENTICATED_HTTP_READ=${!x:-${STORM_AUTHENTICATED_HTTP_READ}}
+  x=STORM_${SA_UPP}_ORGS;                    SA_ORGS=${!x:-""}
 
   aps=""
   for access_point in ${SA_ACCESSPOINT}; do
@@ -35,7 +36,7 @@ for SA in ${STORM_STORAGEAREA_LIST}; do
       aps="${access_point}"
     else
       aps="${aps},${access_point}"
-    fi 
+    fi
   done
 
   yaimlog DEBUG "${FUNCTION}: ${SA_LOW} access points: ${aps}"
@@ -45,6 +46,9 @@ for SA in ${STORM_STORAGEAREA_LIST}; do
     yaimlog INFO "${FUNCTION}: VOMS authorization disabled for storage area ${SA_LOW}"
     vos=""
   fi
+
+  orgs="${SA_ORGS}"
+  yaimlog DEBUG "${FUNCTION}: ${SA_LOW} organizations: ${orgs}"
 
   if [ "${SA_ANONYMOUS_HTTP_READ}" = "true" ]; then
     yaimlog DEBUG "${FUNCTION}: Storage area will be readable for anonymous users: ${SA_LOW}"
@@ -59,11 +63,12 @@ rootPath=${SA_ROOT}
 filesystemType=posixfs
 accessPoints=${aps}
 vos=${vos}
+orgs=${orgs}
 authenticatedReadEnabled=${SA_AUTHENTICATED_HTTP_READ}
 anonymousReadEnabled=${SA_ANONYMOUS_HTTP_READ}
 EOF
-done	
-		
+done
+
 # Exit with success
 return ${YEX_OK}
 }

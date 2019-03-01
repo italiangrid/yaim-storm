@@ -22,18 +22,14 @@ dist_functionlocal_SCRIPTS = config_gip_storm \
     config_storm_frontend \
     config_storm_generic \
     config_storm_globus_gridftp \
-    config_storm_gridhttps_generic \
-    config_storm_gridhttps_properties \
     config_storm_mysql \
     config_storm_namespace \
     config_storm_properties \
     config_storm_rfio \
-    config_storm_start_gridhttps \
-    config_storm_stop_gridhttps \
     config_storm_used_space \
     config_storm_webdav_certs \
     config_storm_webdav_sa \
-		config_storm_webdav_stop \
-		config_storm_webdav_start
+    config_storm_webdav_stop \
+    config_storm_webdav_start
 
 MAINTAINERCLEANFILES = Makefile.in
