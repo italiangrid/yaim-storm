@@ -412,13 +412,13 @@ EOF
           <prot name="root">
             <schema>root</schema>
             <host>${SA_ROOT_HOST}</host>
-            <!--port>1094</port-->
+            <port>1094</port>
           </prot>
           <prot name="xroot">
             <id>${PROTOCOL_ID}</id>
             <schema>xroot</schema>
             <host>${SA_ROOT_HOST}</host>
-            <!--port>1094</port-->
+            <port>1094</port>
           </prot>
 EOF
       ((PROTOCOL_ID++))
