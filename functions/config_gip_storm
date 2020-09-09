@@ -86,8 +86,7 @@ function config_gip_storm() {
     LOGGING_LEVEL=10
   fi
 
-  if [ ${STORM_GRIDHTTPS_ENABLED} ]
-  then
+  if [ ! -z ${STORM_WEBDAV_POOL_LIST} ] && [ "${STORM_GRIDHTTPS_ENABLED}" == "true" ] ; then
     (cat << EOF
       STORM_GRIDHTTPS_ENABLED won't be supported by next releases.
       Please use STORM_WEBDAV_POOL_LIST instead.
